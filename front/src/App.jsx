@@ -1,122 +1,67 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { usePetriNet } from "./hooks/usePetriNet";
+import PetriNetGraph from "./components/PetriNetGraph";        // ⬅️ CHANGÉ
+import ControlPanel from "./components/ControlPanel";
+import EventLog from "./components/EventLog";
+import MatrixDisplay from "./components/MatrixDisplay";
+import { Network } from "lucide-react";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const {
+    state,
+    loading,
+    autoRun,
+    setAutoRun,
+    speed,
+    setSpeed,
+    fire,
+    reset,
+    setCapacity,
+  } = usePetriNet();
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="min-h-screen p-6">
+      <header className="max-w-7xl mx-auto mb-6">
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600">
+            <Network className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold">
+              Réseau de Pétri — Gestion de Parking
+            </h1>
+            <p className="text-sm text-slate-400">
+              Simulation interactive · Moteur NumPy · 10 places (place de réservation compris) · 5 transitions
+            </p>
+          </div>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      {!state ? (
+        <div className="max-w-7xl mx-auto text-center py-20 text-slate-400">
+          ⏳ Connexion au backend (FastAPI sur :8000)...
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      ) : (
+        <main className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <PetriNetGraph state={state} />       {/* ⬅️ CHANGÉ */}
+            <MatrixDisplay state={state} />
+          </div>
+          <div className="space-y-6">
+            <ControlPanel
+              state={state}
+              autoRun={autoRun}
+              setAutoRun={setAutoRun}
+              speed={speed}
+              setSpeed={setSpeed}
+              fire={fire}
+              reset={reset}
+              setCapacity={setCapacity}
+              loading={loading}
+            />
+            <EventLog state={state} />
+          </div>
+        </main>
+      )}
+    </div>
+  );
 }
-
-export default App
