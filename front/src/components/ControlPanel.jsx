@@ -5,6 +5,9 @@ import {
   Zap,
   Settings,
   ArrowRightCircle,
+  ChevronRight,
+  ChevronsRight,
+  TimerReset,
 } from "lucide-react";
 
 const TRANSITION_ORDER = ["T1", "T2", "T3", "T4", "T5"];
@@ -27,8 +30,12 @@ export default function ControlPanel({
   setArrivalMs,
   durations,
   setDuration,
+  speed,
+  speedLevels,
+  speedForward,
   fire,
   reset,
+  resetTimings,
   setCapacity,
   loading,
   bare = false,
@@ -38,8 +45,8 @@ export default function ControlPanel({
   const { enabled, transition_labels, capacity } = state;
 
   return (
-    <div className={bare ? "space-y-5" : "card p-5 space-y-5"}>
-      {!bare && (
+    <div className={bare ? "space-y-5" : "card p-5 space-y-5"}>      
+    {!bare && (
         <h2 className="card-title">
           <Zap className="w-4 h-4 text-token" />
           Panneau de contrôle
@@ -91,6 +98,29 @@ export default function ControlPanel({
 
       <div className="border-t border-slate-200 pt-4">
         <p className="label-eyebrow mb-2">Simulation automatique</p>
+        <div className="flex items-center gap-2 mb-3">
+          <span className="font-mono text-sm font-bold text-accent-hover w-10">
+            ×{speed}
+          </span>
+          <button
+            onClick={() => speedForward(1)}
+            title="Palier suivant"
+            className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 hover:bg-accent-hover hover:text-white text-slate-600 transition-colors"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => speedForward(2)}
+            title="Avance rapide ×2 paliers"
+            className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 hover:bg-accent-hover hover:text-white text-slate-600 transition-colors"
+          >
+            <ChevronsRight className="w-4 h-4" />
+          </button>
+          <span className="text-[11px] text-slate-400 ml-1">
+            paliers : {speedLevels.map((s) => `×${s}`).join(" · ")}
+          </span>
+        </div>
+
         <button
           onClick={() => setAutoRun(!autoRun)}
           className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
@@ -143,6 +173,18 @@ export default function ControlPanel({
             Chaque durée varie aléatoirement autour de la valeur choisie.
           </p>
         </div>
+
+        <button
+          onClick={resetTimings}
+          className="w-full mt-3 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold transition-colors"
+        >
+          <TimerReset className="w-3.5 h-3.5" />
+          Réinitialiser les temps
+        </button>
+        <p className="text-[11px] text-slate-400 mt-1">
+          Vitesse et durées sont sauvegardées automatiquement.
+        </p>
+
       </div>
 
       <div className="border-t border-slate-200 pt-4 space-y-3">

@@ -22,8 +22,12 @@ export default function App() {
     setArrivalMs,
     durations,
     setDuration,
+    speed,
+    speedLevels,
+    speedForward,
     fire,
     reset,
+    resetTimings,
     setCapacity,
   } = usePetriNet();
 
@@ -86,8 +90,12 @@ export default function App() {
                     setArrivalMs={setArrivalMs}
                     durations={durations}
                     setDuration={setDuration}
+                    speed={speed}
+                    speedLevels={speedLevels}
+                    speedForward={speedForward}
                     fire={fire}
                     reset={reset}
+                    resetTimings={resetTimings}
                     setCapacity={setCapacity}
                     loading={loading}
                     bare
