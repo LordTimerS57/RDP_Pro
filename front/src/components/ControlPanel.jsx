@@ -9,12 +9,24 @@ import {
 
 const TRANSITION_ORDER = ["T1", "T2", "T3", "T4", "T5"];
 
+const sec = (ms) => (ms / 1000).toFixed(1).replace(".", ",");
+
+// Durée réglable de chaque transition (idx = index de la transition, T2 = 1)
+const DURATION_CONTROLS = [
+  { idx: 1, id: "T2", label: "Ouverture barrière", min: 200, max: 3000, step: 100 },
+  { idx: 2, id: "T3", label: "Entrée dans le garage", min: 200, max: 3000, step: 100 },
+  { idx: 3, id: "T4", label: "Stationnement", min: 1000, max: 20000, step: 500 },
+  { idx: 4, id: "T5", label: "Réarmement sortie", min: 200, max: 3000, step: 100 },
+];
+
 export default function ControlPanel({
   state,
   autoRun,
   setAutoRun,
-  speed,
-  setSpeed,
+  arrivalMs,
+  setArrivalMs,
+  durations,
+  setDuration,
   fire,
   reset,
   setCapacity,
@@ -79,32 +91,57 @@ export default function ControlPanel({
 
       <div className="border-t border-slate-200 pt-4">
         <p className="label-eyebrow mb-2">Simulation automatique</p>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setAutoRun(!autoRun)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
-              autoRun
-                ? "bg-rose-600 hover:bg-rose-700 text-white"
-                : "bg-emerald-600 hover:bg-emerald-700 text-white"
-            }`}
-          >
-            {autoRun ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            {autoRun ? "Stop" : "Démarrer"}
-          </button>
-          <div className="flex-1">
-            <label className="text-[11px] text-slate-400">
-              Vitesse : {speed} ms
+        <button
+          onClick={() => setAutoRun(!autoRun)}
+          className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+            autoRun
+              ? "bg-rose-600 hover:bg-rose-700 text-white"
+              : "bg-emerald-600 hover:bg-emerald-700 text-white"
+          }`}
+        >
+          {autoRun ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+          {autoRun ? "Stop" : "Démarrer"}
+        </button>
+
+        <div className="mt-4 space-y-4">
+          <div>
+            <label className="flex justify-between text-[11px] text-slate-500 mb-1">
+              <span>Arrivées (T1)</span>
+              <span className="font-mono">1 voiture / {sec(arrivalMs)} s</span>
             </label>
             <input
               type="range"
-              min="100"
-              max="2000"
-              step="100"
-              value={speed}
-              onChange={(e) => setSpeed(Number(e.target.value))}
+              min="500"
+              max="8000"
+              step="250"
+              value={arrivalMs}
+              onChange={(e) => setArrivalMs(Number(e.target.value))}
               className="w-full accent-accent-hover"
             />
           </div>
+
+          {DURATION_CONTROLS.map(({ idx, id, label, min, max, step }) => (
+            <div key={id}>
+              <label className="flex justify-between text-[11px] text-slate-500 mb-1">
+                <span>
+                  <span className="font-mono font-bold text-slate-700">{id}</span> · {label}
+                </span>
+                <span className="font-mono">{sec(durations[idx])} s</span>
+              </label>
+              <input
+                type="range"
+                min={min}
+                max={max}
+                step={step}
+                value={durations[idx]}
+                onChange={(e) => setDuration(idx, Number(e.target.value))}
+                className="w-full accent-accent-hover"
+              />
+            </div>
+          ))}
+          <p className="text-[11px] text-slate-400">
+            Chaque durée varie aléatoirement autour de la valeur choisie.
+          </p>
         </div>
       </div>
 
@@ -128,7 +165,7 @@ export default function ControlPanel({
           className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-slate-100 hover:bg-accent-hover hover:text-white text-slate-700 text-sm font-semibold transition-colors"
         >
           <RotateCcw className="w-4 h-4" />
-          Réinitialiser (M0)
+          Tout réinitialiser
         </button>
       </div>
     </div>

@@ -18,8 +18,8 @@ export default {
           300: "#cbd5e1",
         },
         accent: {
-          DEFAULT: "#2563eb",
-          hover: "#1e3a8a",
+          DEFAULT: "#2563eb",   // bleu (places actives)
+          hover: "#1e3a8a",     // bleu foncé (hover, ressource)
           soft: "#eff6ff",
         },
         token: {

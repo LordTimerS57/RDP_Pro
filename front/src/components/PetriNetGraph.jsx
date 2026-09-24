@@ -31,6 +31,7 @@ const TRANS_POS = {
 };
 
 const PLACE_R = 50;
+const TOKEN_DISPLAY_MAX = 10; // à partir de 10 jetons : on affiche le nombre au lieu des points
 const TRANS_W = 100;
 const TRANS_H = 50;
 
@@ -181,8 +182,8 @@ function PlaceNode({ id, x, y, tokens, label, accent }) {
         {label}
       </text>
 
-      {tokens > 0 &&
-        Array.from({ length: Math.min(tokens, 9) }).map((_, i) => {
+      {tokens > 0 && tokens < TOKEN_DISPLAY_MAX &&
+        Array.from({ length: tokens }).map((_, i) => {
           const cols = tokens <= 4 ? tokens : 3;
           const rows = Math.ceil(tokens / cols);
           const col = i % cols;
@@ -203,8 +204,15 @@ function PlaceNode({ id, x, y, tokens, label, accent }) {
           );
         })}
 
-      {tokens > 9 && (
-        <text y={8} textAnchor="middle" fill={COLOR_TOKEN} fontSize="22" fontWeight="800">
+      {tokens >= TOKEN_DISPLAY_MAX && (
+        <text
+          textAnchor="middle"
+          dominantBaseline="central"
+          fill={COLOR_TOKEN}
+          fontSize="30"
+          fontWeight="800"
+          fontFamily="JetBrains Mono, monospace"
+        >
           {tokens}
         </text>
       )}

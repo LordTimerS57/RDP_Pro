@@ -18,8 +18,10 @@ export default function App() {
     loading,
     autoRun,
     setAutoRun,
-    speed,
-    setSpeed,
+    arrivalMs,
+    setArrivalMs,
+    durations,
+    setDuration,
     fire,
     reset,
     setCapacity,
@@ -80,8 +82,10 @@ export default function App() {
                     state={state}
                     autoRun={autoRun}
                     setAutoRun={setAutoRun}
-                    speed={speed}
-                    setSpeed={setSpeed}
+                    arrivalMs={arrivalMs}
+                    setArrivalMs={setArrivalMs}
+                    durations={durations}
+                    setDuration={setDuration}
                     fire={fire}
                     reset={reset}
                     setCapacity={setCapacity}
