@@ -18,14 +18,19 @@ export default {
           300: "#cbd5e1",
         },
         accent: {
-          DEFAULT: "#2563eb",   // bleu foncé de base
-          hover: "#1e3a8a",     // bleu foncé plus profond (hover)
+          DEFAULT: "#2563eb",
+          hover: "#1e3a8a",
           soft: "#eff6ff",
         },
-        brown: {
-          DEFAULT: "#78350f",   // marron principal (remplace le jaune/ambre)
-          dark: "#5c2a0c",
-          soft: "#fdf3e7",
+        token: {
+          DEFAULT: "#4338ca",   // indigo (jetons)
+          dark: "#312e81",
+          soft: "#eef2ff",
+        },
+        reserve: {
+          DEFAULT: "#0f766e",   // bleu-vert foncé (réservation)
+          dark: "#115e59",
+          soft: "#f0fdfa",
         },
       },
       boxShadow: {

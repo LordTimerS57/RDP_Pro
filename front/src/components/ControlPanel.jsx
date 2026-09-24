@@ -29,7 +29,7 @@ export default function ControlPanel({
     <div className={bare ? "space-y-5" : "card p-5 space-y-5"}>
       {!bare && (
         <h2 className="card-title">
-          <Zap className="w-4 h-4 text-amber-500" />
+          <Zap className="w-4 h-4 text-token" />
           Panneau de contrôle
         </h2>
       )}
@@ -120,7 +120,7 @@ export default function ControlPanel({
             max="20"
             value={capacity}
             onChange={(e) => setCapacity(Number(e.target.value))}
-            className="w-full accent-brown"
+            className="w-full accent-token"
           />
         </div>
         <button

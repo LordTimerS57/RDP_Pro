@@ -107,29 +107,36 @@ function edgePoint(from, to) {
 }
 
 // ============================================================================
-// Palette (bleu foncé + marron)
+// Palette (bleu + bleu-vert foncé pour la réservation + indigo pour les jetons)
 // ============================================================================
-const COLOR_ACCENT = "#2563eb";       // bleu foncé (place/transition active)
-const COLOR_ACCENT_DARK = "#1e3a8a";  // bleu foncé profond (ressource, hover)
-const COLOR_ACCENT_SOFT = "#eff6ff";  // bleu très clair (fond des places actives)
-const COLOR_BROWN = "#78350f";        // marron (réservation)
-const COLOR_BROWN_TOKEN = "#b45309";  // marron plus clair (jetons)
-const COLOR_NEUTRAL = "#94a3b8";      // gris neutre (places/arcs inactifs)
+const COLOR_ACCENT = "#2563eb";        // bleu (place active)
+const COLOR_ACCENT_DARK = "#1e3a8a";   // bleu foncé (ressource, hover)
+const COLOR_ACCENT_SOFT = "#eff6ff";   // bleu très clair (fond des places actives)
+const COLOR_RESERVE = "#0f766e";       // bleu-vert foncé (réservation)
+const COLOR_RESERVE_SOFT = "#f0fdfa";  // bleu-vert très clair (fond de P10 marquée)
+const COLOR_TOKEN = "#4338ca";         // indigo (jetons)
+const COLOR_TOKEN_DARK = "#312e81";    // indigo foncé (contour des jetons)
+const COLOR_NEUTRAL = "#94a3b8";       // gris neutre (places/arcs inactifs)
 
 // ============================================================================
 // Composants SVG
 // ============================================================================
 function PlaceNode({ id, x, y, tokens, label, accent }) {
   const strokeColor =
-    accent === "reservation" ? COLOR_BROWN :
+    accent === "reservation" ? COLOR_RESERVE :
     accent === "resource"    ? COLOR_ACCENT_DARK :
     tokens > 0               ? COLOR_ACCENT :
                                COLOR_NEUTRAL;
 
   const haloColor =
-    accent === "reservation" ? COLOR_BROWN :
+    accent === "reservation" ? COLOR_RESERVE :
     accent === "resource"    ? COLOR_ACCENT_DARK :
                                COLOR_ACCENT;
+
+  const fillColor =
+    tokens > 0
+      ? (accent === "reservation" ? COLOR_RESERVE_SOFT : COLOR_ACCENT_SOFT)
+      : "#ffffff";
 
   return (
     <g transform={`translate(${x}, ${y})`}>
@@ -147,7 +154,7 @@ function PlaceNode({ id, x, y, tokens, label, accent }) {
 
       <circle
         r={PLACE_R}
-        fill={tokens > 0 ? COLOR_ACCENT_SOFT : "#ffffff"}
+        fill={fillColor}
         stroke={strokeColor}
         strokeWidth={tokens > 0 ? 4.5 : 3}
       />
@@ -189,15 +196,15 @@ function PlaceNode({ id, x, y, tokens, label, accent }) {
               cx={ox}
               cy={oy}
               r={6}
-              fill={COLOR_BROWN_TOKEN}
-              stroke={COLOR_BROWN}
+              fill={COLOR_TOKEN}
+              stroke={COLOR_TOKEN_DARK}
               strokeWidth="0.75"
             />
           );
         })}
 
       {tokens > 9 && (
-        <text y={8} textAnchor="middle" fill={COLOR_BROWN} fontSize="22" fontWeight="800">
+        <text y={8} textAnchor="middle" fill={COLOR_TOKEN} fontSize="22" fontWeight="800">
           {tokens}
         </text>
       )}
@@ -254,10 +261,10 @@ function Arc({ from, to }) {
   const { sx, sy, ex, ey } = edgePoint(fc, tc);
 
   let color = COLOR_NEUTRAL;
-  if (from.type === "place" && from.id === "P9") color = COLOR_ACCENT_DARK;
+  if (from.type === "place" && from.id === "P9")   color = COLOR_ACCENT_DARK;
   if (from.type === "trans" && to.id === "P9")     color = COLOR_ACCENT_DARK;
-  if (from.type === "trans" && to.id === "P10")    color = COLOR_BROWN;
-  if (from.type === "place" && from.id === "P10")  color = COLOR_BROWN;
+  if (from.type === "trans" && to.id === "P10")    color = COLOR_RESERVE;
+  if (from.type === "place" && from.id === "P10")  color = COLOR_RESERVE;
 
   const dx = ex - sx;
   const dy = ey - sy;
@@ -344,8 +351,12 @@ export default function PetriNetGraph({ state }) {
             Ressource (P9)
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-4 h-4 rounded-full border-2 border-brown bg-white"></span>
+            <span className="w-4 h-4 rounded-full border-2 border-reserve bg-white"></span>
             Réservation (P10)
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-token border border-token-dark"></span>
+            Jeton
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-4 h-4 rounded bg-emerald-200 border border-emerald-500"></span>
@@ -416,7 +427,7 @@ export default function PetriNetGraph({ state }) {
             <span
               className={`font-bold w-9 ${
                 pid === "P9" ? "text-accent-hover" :
-                pid === "P10" ? "text-brown" :
+                pid === "P10" ? "text-reserve" :
                 "text-accent"
               }`}
             >
@@ -425,7 +436,7 @@ export default function PetriNetGraph({ state }) {
             <span className="text-slate-500 truncate flex-1">
               {SHORT_PLACE[place_labels[pid]]}
             </span>
-            <span className="text-brown font-bold">{marking[idx]}</span>
+            <span className="text-token font-bold">{marking[idx]}</span>
           </div>
         ))}
       </div>
