@@ -5,7 +5,7 @@ const API = "http://127.0.0.1:8000/api";
 // ---------------------------------------------------------------------------
 // Réglages de la simulation
 // ---------------------------------------------------------------------------
-const TICK_MS = 100;
+const TICK_MS = 50;
 const MAX_QUEUE = 8;
 
 const DEFAULT_CAPACITY = 5;
@@ -21,7 +21,7 @@ const DEFAULT_DURATIONS = {
 const JITTER = { 0: 0.4, 1: 0.2, 2: 0.2, 3: 0.4, 4: 0.2 };
 
 // Paliers d'avance rapide : (>) avance d'un palier, (>>) en saute deux
-const SPEED_LEVELS = [1, 2, 4, 8];
+const SPEED_LEVELS = [1, 2, 4, 8, 16];
 const DEFAULT_SPEED = 1;
 
 // Clé de sauvegarde locale des réglages de temporisation
@@ -197,18 +197,24 @@ export function usePetriNet() {
   useEffect(() => {
     if (!autoRun) return;
 
+    let simNow = 0;
+    let last = performance.now();
     const due = {};
     const parked = [];
 
-    const delay = (i) => {
-      const base = i === 0 ? arrivalRef.current : durationsRef.current[i];
-      return jitter(base, JITTER[i]) / speedRef.current;
-    };
+    // plus de division par la vitesse ici
+    const delay = (i) =>
+    jitter(i === 0 ? arrivalRef.current : durationsRef.current[i], JITTER[i]);
 
     const id = setInterval(() => {
+      // l'horloge avance même pendant un fire en cours
+      const t = performance.now();
+      simNow += (t - last) * speedRef.current;
+      last = t;
+
       const s = stateRef.current;
       if (!s || busyRef.current) return;
-      const now = Date.now();
+      const now = simNow;
 
       const nParked = s.marking[2];
       while (parked.length < nParked) parked.push(now + delay(3));
